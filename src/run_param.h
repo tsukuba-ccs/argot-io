@@ -7,29 +7,13 @@ extern "C" {
 
 #include <stdint.h>
 
-#if 0
-#define NMESH_X_TOTAL (64)
-#define NMESH_Y_TOTAL (64)
-#define NMESH_Z_TOTAL (64)
-#endif 
-
-#if 1
 #define NMESH_X_TOTAL (128)
 #define NMESH_Y_TOTAL (128)
 #define NMESH_Z_TOTAL (128)
-#endif
 
-#if 0
-#define NMESH_X_TOTAL (256)
-#define NMESH_Y_TOTAL (256)
-#define NMESH_Z_TOTAL (256)
-#endif
-
-#if 0
-#define NMESH_X_TOTAL (512)
-#define NMESH_Y_TOTAL (512)
-#define NMESH_Z_TOTAL (512)
-#endif
+#define NNODE_X (2)
+#define NNODE_Y (2)
+#define NNODE_Z (2)
 
 #define NMESH_Z_TOTAL_P2 (NMESH_Z_TOTAL+2)
 
@@ -52,9 +36,6 @@ extern "C" {
 #define NMESH_Z_GREEN    (NMESH_Z_TOTAL/2+1)
 #endif
 
-#define NNODE_X (2)
-#define NNODE_Y (2)
-#define NNODE_Z (2)
 #define NNODE (NNODE_X*NNODE_Y*NNODE_Z)
 #define NSEG_PER_RAY (5) /* max. number of segments for a single light ray */
 

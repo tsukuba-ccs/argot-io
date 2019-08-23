@@ -7,9 +7,8 @@ application.
 
 ## How to install
 
-1. Edit CC and CFLAGS in Makefile
-
-2. Edit the problem size and the number of processes in run_param.h
+1. Edit the problem size and the number of processes in
+   src/run_param.h
 
 * Problem size
 ```
@@ -24,8 +23,11 @@ application.
 #define NNODE_Z (2)
 ```
 
-3. Compile the program by make.  The executables setup_IC and
-   io_bench_argot will be generated.
+2. Compile the program by configure and make.
+```
+% ./configure
+% make
+```
 
 ## How to execute
 
