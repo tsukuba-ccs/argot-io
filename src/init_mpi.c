@@ -61,7 +61,7 @@ void init_mpi(struct run_param *this_run, struct mpi_param *this_mpi)
   adr[1]=8;
   adr[2]=16;
 
-  MPI_Type_struct(3,blockcount, adr, type, &(this_mpi->segment_type));
+  MPI_Type_create_struct(3,blockcount, adr, type, &(this_mpi->segment_type));
   MPI_Type_commit(&(this_mpi->segment_type));
 
   /* define the MPI data type for the prim_chem structure */
@@ -75,7 +75,7 @@ void init_mpi(struct run_param *this_run, struct mpi_param *this_mpi)
   type[0]=MPI_FLOAT;
   adr[0]=0;
 
-  MPI_Type_struct(1,blockcount, adr, type, &(this_mpi->prim_chem_type));
+  MPI_Type_create_struct(1,blockcount, adr, type, &(this_mpi->prim_chem_type));
   MPI_Type_commit(&(this_mpi->prim_chem_type));
 
   /* define the MPI data type for the fluid_mesh_io structure */
@@ -86,7 +86,7 @@ void init_mpi(struct run_param *this_run, struct mpi_param *this_mpi)
   adr[0]=0;
   adr[1]=24;
 
-  MPI_Type_struct(2,blockcount, adr, type, &(this_mpi->fluid_mesh_io_type));
+  MPI_Type_create_struct(2,blockcount, adr, type, &(this_mpi->fluid_mesh_io_type));
   MPI_Type_commit(&(this_mpi->fluid_mesh_io_type));
 
   /* define the MPI data type fo ther photoion_rate structure */
@@ -100,7 +100,7 @@ void init_mpi(struct run_param *this_run, struct mpi_param *this_mpi)
   type[0]=MPI_FLOAT;
   adr[0]=0;
 
-  MPI_Type_struct(1,blockcount, adr, type, &(this_mpi->photoion_rate_type));
+  MPI_Type_create_struct(1,blockcount, adr, type, &(this_mpi->photoion_rate_type));
   MPI_Type_commit(&(this_mpi->photoion_rate_type));
   
 }
