@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <mpi.h>
 #include <unistd.h>
+#include <getopt.h>
 
 #include "constants.h"
 #include "run_param.h"
@@ -12,6 +13,7 @@
 #include "source.h"
 
 #include "prototype.h"
+#include "io_ops.h"
 
 int main(int argc, char **argv)
 {
@@ -21,6 +23,21 @@ int main(int argc, char **argv)
   
   struct radiation_src *src;
   struct fluid_mesh *mesh;
+  char *api = "posix";
+  int c;
+
+  while ((c = getopt(argc, argv, "a:")) != -1) {
+    switch (c) {
+    case 'a':
+      api = optarg;
+      break;
+    }
+  }
+  argc -= optind;
+  argv += optind;
+
+  init_io_ops(api);
+  io_ops->init();
 
   src = (struct radiation_src *)malloc(sizeof(struct radiation_src)*NSOURCE_MAX);
   mesh = (struct fluid_mesh *)malloc(sizeof(struct fluid_mesh)*NMESH_LOCAL);
@@ -28,8 +45,8 @@ int main(int argc, char **argv)
   MPI_Init(&argc, &argv);
 
   init_mpi(&this_run, &this_mpi);
-  input_data(mesh, src, &this_run, argv[1]);
-  input_params(&this_run, argv[2]);
+  input_data(mesh, src, &this_run, argv[0]);
+  input_params(&this_run, argv[1]);
   init_run(&this_run);
 
   fprintf(this_run.proc_file, 
@@ -63,5 +80,5 @@ int main(int argc, char **argv)
 	  (float)this_run.output_file_size/this_run.output_wt/1.0e9);
 
   MPI_Finalize();
-
+  io_ops->term();
 }

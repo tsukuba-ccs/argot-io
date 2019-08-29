@@ -10,6 +10,7 @@ AC_CONFIG_MACRO_DIR([m4])
 
 # Checks for programs.
 AC_PROG_CC
+AC_PROG_LIBTOOL
 AX_MPI
 
 # Checks for libraries.
@@ -26,6 +27,24 @@ AC_TYPE_UINT64_T
 # Checks for library functions.
 AC_FUNC_MALLOC
 AC_CHECK_FUNCS([getcwd gettimeofday mkdir pow sqrt])
+
+# Gfarm support
+AC_MSG_CHECKING([for Gfarm file system])
+AC_ARG_WITH([gfarm],
+  [AS_HELP_STRING([--with-gfarm=GFARM_ROOT],
+    [support IO with Gfarm backend @<:@default=no@:>@])],
+  [], [with_gfarm=no])
+AC_MSG_RESULT([$with_gfarm])
+AM_CONDITIONAL([GFARM], [test x$with_gfarm != xno])
+if test x$with_gfarm != xno; then
+  case x$with_gfarm in
+    xyes) ;;
+    *)
+    CPPFLAGS="$CPPFLAGS -I$with_gfarm/include"
+    LDFLAGS="$LDFLAGS -L$with_gfarm/lib" ;;
+  esac
+  AC_CHECK_LIB([gfarm], [gfarm_initialize],, [AC_MSG_ERROR([libgfarm not found])])
+fi
 
 AC_CONFIG_FILES([Makefile src/Makefile])
 AC_OUTPUT

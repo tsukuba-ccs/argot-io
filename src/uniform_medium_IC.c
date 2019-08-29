@@ -1,5 +1,7 @@
+#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <getopt.h>
 #include <math.h>
 
 #include "constants.h"
@@ -7,6 +9,7 @@
 #include "fluid.h"
 #include "source.h"
 #include "prototype.h"
+#include "io_ops.h"
 
 #define MESH(ix,iy,iz) (mesh[(iz)+NMESH_Z_LOCAL*((iy)+NMESH_Y_LOCAL*(ix))])
 
@@ -14,12 +17,6 @@ void make_directory(char*);
 
 int main(int argc, char **argv)
 {
-
-  if(argc != 2) {
-    fprintf(stderr,"Usage: %s <prefix>\n", argv[0]);
-    exit(EXIT_FAILURE);
-  }
-
   static struct run_param this_run;
 
   static struct fluid_mesh mesh[NMESH_X_LOCAL*NMESH_Y_LOCAL*NMESH_Z_LOCAL];
@@ -29,6 +26,28 @@ int main(int argc, char **argv)
   static char model_name[256],label[256],dir_name[256];
 
   double nH, tmpr;
+  char *api = "posix", *program;
+  int c;
+
+  program = argv[0];
+
+  while ((c = getopt(argc, argv, "a:")) != -1) {
+    switch (c) {
+    case 'a':
+      api = optarg;
+      break;
+    }
+  }
+  argc -= optind;
+  argv += optind;
+
+  if(argc != 1) {
+    fprintf(stderr,"Usage: %s <prefix>", program);
+    exit(EXIT_FAILURE);
+  }
+
+  init_io_ops(api);
+  io_ops->init();
 
   this_run.nmesh_x_total=NMESH_X_TOTAL;
   this_run.nmesh_y_total=NMESH_Y_TOTAL;
@@ -132,8 +151,8 @@ int main(int argc, char **argv)
   }
 #endif
 
-  sprintf(model_name, "%s", argv[1]);
-  sprintf(dir_name, "%s-init", argv[1]);
+  sprintf(model_name, "%s", argv[0]);
+  sprintf(dir_name, "%s-init", argv[0]);
   make_directory(dir_name);
   sprintf(label,"%s-init/%s-init",model_name,model_name);
 
@@ -189,4 +208,5 @@ int main(int argc, char **argv)
 
   //  printf("# initial heat capacity ratio : %14.6e\n", gamma_total(&mesh[0], &this_run));
 
+  io_ops->term();
 }

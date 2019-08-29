@@ -9,6 +9,7 @@
 #include "fluid.h"
 #include "source.h"
 #include "prototype.h"
+#include "io_ops.h"
 
 #define FILENAME_LENGTH (256)
 
@@ -17,27 +18,25 @@ void make_directory(char*);
 void output_mesh_single(struct fluid_mesh *mesh, struct run_param *this_run,
 			char *filename)
 {
+  void *output_fp;
 
-  FILE *output_fp;
-
-  output_fp = fopen(filename,"w");
-
-  fwrite(this_run, sizeof(struct run_param), 1, output_fp);
+  io_ops->write_open(filename, &output_fp);
+  io_ops->write(this_run, sizeof(*this_run), output_fp);
 
   int imesh;
   for(imesh=0;imesh<NMESH_X_LOCAL*NMESH_Y_LOCAL*NMESH_Z_LOCAL;imesh++) {
     struct fluid_mesh_io tmp_mesh;
+
     tmp_mesh.dens = mesh[imesh].dens;
     tmp_mesh.eneg = mesh[imesh].eneg;
     tmp_mesh.momx = mesh[imesh].momx;
     tmp_mesh.momy = mesh[imesh].momy;
     tmp_mesh.momz = mesh[imesh].momz;
     tmp_mesh.chem = mesh[imesh].chem;
-    fwrite(&tmp_mesh, sizeof(struct fluid_mesh_io), 1, output_fp);
+
+    io_ops->write(&tmp_mesh, sizeof(tmp_mesh), output_fp);
   }
-
-  fclose(output_fp);
-
+  io_ops->close(output_fp);
 }
 
 void output_mesh(struct fluid_mesh *mesh, struct run_param *this_run,
@@ -56,17 +55,16 @@ void output_mesh(struct fluid_mesh *mesh, struct run_param *this_run,
 void output_src(struct radiation_src *src, struct run_param *this_run,
 		char *prefix)
 {
-  FILE *output_fp;
+  void *output_fp;
   static char filename[FILENAME_LENGTH];
 
   sprintf(filename,"%s_src.dat",prefix);
 
-  output_fp = fopen(filename, "w");
-  fwrite(&(this_run->nsrc), sizeof(uint64_t), 1, output_fp);
-  fwrite(&this_run->freq, sizeof(struct freq_param), 1, output_fp);
-  fwrite(src, sizeof(struct radiation_src), this_run->nsrc, output_fp);
-  fclose(output_fp);
-
+  io_ops->write_open(filename, &output_fp);
+  io_ops->write(&(this_run->nsrc), sizeof(uint64_t), output_fp);
+  io_ops->write(&this_run->freq, sizeof(struct freq_param), output_fp);
+  io_ops->write(src, sizeof(struct radiation_src) * this_run->nsrc, output_fp);
+  io_ops->close(output_fp);
 }
 
 void output_data(struct fluid_mesh *mesh, 

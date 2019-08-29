@@ -9,6 +9,7 @@
 #include "fluid.h"
 #include "source.h"
 #include "prototype.h"
+#include "io_ops.h"
 
 #define FILENAME_LENGTH (256)
 
@@ -56,11 +57,11 @@ void input_mesh_header_prefix(struct run_param *this_run, char *prefix)
 void input_mesh_header(struct run_param *this_run, char *filename)
 {
   struct run_param input_run;
-  FILE *input_fp;
+  void *input_fp;
   
-  input_fp = fopen(filename,"r");
-  fread(&input_run, sizeof(struct run_param), 1, input_fp);
-  fclose(input_fp);
+  io_ops->read_open(filename, &input_fp);
+  io_ops->read(&input_run, sizeof(struct run_param), input_fp);
+  io_ops->close(input_fp);
 
   if(input_run.nmesh_x_total != NMESH_X_TOTAL ||
      input_run.nmesh_y_total != NMESH_Y_TOTAL ||
@@ -111,16 +112,15 @@ void input_mesh_header(struct run_param *this_run, char *filename)
     exit(EXIT_FAILURE);
   }
 
-  input_fp = fopen(filename,"r");
-  fread(this_run, sizeof(struct run_param), 1, input_fp);
-  fclose(input_fp);
-
+  io_ops->read_open(filename, &input_fp);
+  io_ops->read(this_run, sizeof(struct run_param), input_fp);
+  io_ops->close(input_fp);
 }
 
 void input_mesh_single(struct fluid_mesh *mesh, struct run_param *this_run,
 		       char *filename)
 {
-  FILE *input_fp;
+  void *input_fp;
 
   struct timeval start_tv, stop_tv;
   struct tms start_tms, stop_tms;
@@ -133,21 +133,21 @@ void input_mesh_single(struct fluid_mesh *mesh, struct run_param *this_run,
 
   input_mesh_header(this_run,filename);
   
-  input_fp = fopen(filename,"r");
+  io_ops->read_open(filename, &input_fp);
 
   times(&start_tms);
   gettimeofday(&start_tv, NULL);
   
-  fread(this_run, sizeof(struct run_param), 1, input_fp);
+  io_ops->read(this_run, sizeof(struct run_param), input_fp);
 #if 0
-  fread(mesh, sizeof(struct fluid_mesh), 
+  io_ops->read(mesh, sizeof(struct fluid_mesh) *
 	NMESH_X_LOCAL*NMESH_Y_LOCAL*NMESH_Z_LOCAL,
 	input_fp);
 #else
   int imesh;
   for(imesh=0;imesh<NMESH_X_LOCAL*NMESH_Y_LOCAL*NMESH_Z_LOCAL;imesh++) {
     struct fluid_mesh_io temp_mesh;
-    fread(&temp_mesh, sizeof(struct fluid_mesh_io), 1, input_fp);
+    io_ops->read(&temp_mesh, sizeof(struct fluid_mesh_io), input_fp);
     mesh[imesh].dens = temp_mesh.dens;
     mesh[imesh].eneg = temp_mesh.eneg;
     mesh[imesh].momx = temp_mesh.momx;
@@ -172,7 +172,7 @@ void input_mesh_single(struct fluid_mesh *mesh, struct run_param *this_run,
   this_run->input_mesh_wt = walltime;
   this_run->input_mesh_tp = mesh_data_size/walltime/1.0e9;
 
-  fclose(input_fp);
+  io_ops->close(input_fp);
 }
 
 void input_mesh(struct fluid_mesh *mesh, struct run_param *this_run,
@@ -192,7 +192,7 @@ void input_src(struct radiation_src *src, struct run_param *this_run,
 	       char *prefix)
 {
   static char filename[FILENAME_LENGTH];
-  FILE *input_fp;
+  void *input_fp;
 
   struct timeval start_tv, stop_tv;
   struct tms start_tms, stop_tms;
@@ -207,7 +207,7 @@ void input_src(struct radiation_src *src, struct run_param *this_run,
 
   sprintf(filename,"%s_src.dat", prefix);
 
-  input_fp = fopen(filename, "r");
+  io_ops->read_open(filename, &input_fp);
 
   times(&start_tms);
   gettimeofday(&start_tv, NULL);
@@ -217,7 +217,7 @@ void input_src(struct radiation_src *src, struct run_param *this_run,
     exit(EXIT_FAILURE);
   }
   
-  fread(&(this_run->nsrc), sizeof(uint64_t), 1, input_fp);
+  io_ops->read(&(this_run->nsrc), sizeof(uint64_t), input_fp);
 
   if(this_run->nsrc > NSOURCE_MAX) {
     fprintf(stderr, "# Exceeds the max. number of the sources\n");
@@ -225,8 +225,8 @@ void input_src(struct radiation_src *src, struct run_param *this_run,
     exit(EXIT_FAILURE);
   }
 
-  fread(&this_run->freq, sizeof(struct freq_param), 1, input_fp);
-  fread(src, sizeof(struct radiation_src), this_run->nsrc, input_fp);
+  io_ops->read(&this_run->freq, sizeof(struct freq_param), input_fp);
+  io_ops->read(src, sizeof(struct radiation_src) * this_run->nsrc, input_fp);
 
   times(&stop_tms);
   gettimeofday(&stop_tv, NULL);
@@ -236,24 +236,24 @@ void input_src(struct radiation_src *src, struct run_param *this_run,
   this_run->input_src_wt = walltime;
   this_run->input_src_tp = source_data_size/walltime/1.0e9;
 
-  fclose(input_fp);
+  io_ops->close(input_fp);
 }
 
 void input_src_file(struct radiation_src *src, struct run_param *this_run, 
                     char *src_file)
 {
-  FILE *input_fp;
+  void *input_fp;
 
   uint64_t input_nsrc;
 
-  input_fp = fopen(src_file, "r");
+  io_ops->read_open(src_file, &input_fp);
   
   if(input_fp == NULL) {
     fprintf(stderr, "# File %s not found\n", src_file);
     exit(EXIT_FAILURE);
   }
   
-  fread(&(this_run->nsrc), sizeof(uint64_t), 1, input_fp);
+  io_ops->read(&(this_run->nsrc), sizeof(uint64_t), input_fp);
 
   if(this_run->nsrc > NSOURCE_MAX) {
     fprintf(stderr, "# Exceeds the max. number of the sources\n");
@@ -261,10 +261,10 @@ void input_src_file(struct radiation_src *src, struct run_param *this_run,
     exit(EXIT_FAILURE);
   }
 
-  fread(&this_run->freq, sizeof(struct freq_param), 1, input_fp);
-  fread(src, sizeof(struct radiation_src), this_run->nsrc, input_fp);
+  io_ops->read(&this_run->freq, sizeof(struct freq_param), input_fp);
+  io_ops->read(src, sizeof(struct radiation_src) * this_run->nsrc, input_fp);
 
-  fclose(input_fp);
+  io_ops->close(input_fp);
 }
 
 

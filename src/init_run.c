@@ -9,6 +9,7 @@
 #include "cross_section.h"
 
 #include "prototype.h"
+#include "io_ops.h"
 
 #define FILENAME_LENGTH (256)
 void make_directory(char*);
@@ -17,9 +18,13 @@ void init_run(struct run_param *this_run)
 {
   static char dirname[FILENAME_LENGTH];
   static char proc_filename[FILENAME_LENGTH];
+  struct io_ops *saved_io_ops = io_ops;
 
   sprintf(dirname,"%s-out",this_run->model_name);
+  /* XXX - hack to use POSIX */
+  init_io_ops("posix");
   make_directory(dirname);
+  io_ops = saved_io_ops;
   
   sprintf(proc_filename, "%s-out/out_%03d_%03d_%03d", this_run->model_name,
 	  this_run->rank_x, this_run->rank_y, this_run->rank_z);
