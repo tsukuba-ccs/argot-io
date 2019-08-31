@@ -7,6 +7,7 @@ struct io_ops {
 	int (*read)(void *, int, void *);
 	int (*close)(void *);
 	int (*mkdir)(char *, int);
+	int (*unlink)(char *);
 };
 
 extern struct io_ops *io_ops;

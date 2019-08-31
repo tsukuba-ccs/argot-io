@@ -114,6 +114,18 @@ gfarm_mkdir(char *fn, int mode)
 	return (-1);
 }
 
+int
+gfarm_unlink(char *fn)
+{
+	gfarm_error_t e;
+
+	e = gfs_unlink(fn);
+	if (e == GFARM_ERR_NO_ERROR)
+		return (0);
+	errno = gfarm_error_to_errno(e);
+	return (-1);
+}
+
 struct io_ops io_ops_gfarm =
 {
 	.init = gfarm_init,
@@ -123,7 +135,8 @@ struct io_ops io_ops_gfarm =
 	.write = gfarm_write,
 	.read = gfarm_read,
 	.close = gfarm_close,
-	.mkdir = gfarm_mkdir
+	.mkdir = gfarm_mkdir,
+	.unlink = gfarm_unlink
 };
 
 struct io_ops *

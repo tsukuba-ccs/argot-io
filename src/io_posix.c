@@ -1,3 +1,4 @@
+#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>
@@ -73,6 +74,12 @@ posix_mkdir(char *fn, int mode)
 	return (mkdir(fn, mode));
 }
 
+int
+posix_unlink(char *fn)
+{
+	return (unlink(fn));
+}
+
 struct io_ops io_ops_posix =
 {
 	.init = posix_init,
@@ -82,7 +89,8 @@ struct io_ops io_ops_posix =
 	.write = posix_write,
 	.read = posix_read,
 	.close = posix_close,
-	.mkdir = posix_mkdir
+	.mkdir = posix_mkdir,
+	.unlink = posix_unlink
 };
 
 struct io_ops *
