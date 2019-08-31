@@ -78,9 +78,11 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-bin_PROGRAMS = io_bench_argot$(EXEEXT) setup_IC$(EXEEXT)
+bin_PROGRAMS = io_bench_argot$(EXEEXT) setup_IC$(EXEEXT) \
+	argot-io$(EXEEXT)
 @GFARM_TRUE@am__append_1 = io_gfarm.c
 @GFARM_TRUE@am__append_2 = io_gfarm.c
+@GFARM_TRUE@am__append_3 = io_gfarm.c
 subdir = src
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(srcdir)/config.h.in $(top_srcdir)/depcomp
@@ -97,13 +99,22 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
+am__argot_io_SOURCES_DIST = argot-io.c io_posix.c io_ops.h io_gfarm.c
+@GFARM_TRUE@am__objects_1 = io_gfarm.$(OBJEXT)
+am_argot_io_OBJECTS = argot-io.$(OBJEXT) io_posix.$(OBJEXT) \
+	$(am__objects_1)
+argot_io_OBJECTS = $(am_argot_io_OBJECTS)
+argot_io_LDADD = $(LDADD)
+AM_V_lt = $(am__v_lt_@AM_V@)
+am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
+am__v_lt_0 = --silent
+am__v_lt_1 = 
 am__io_bench_argot_SOURCES_DIST = init_mpi.c init_run.c input_data.c \
 	input_params.c io_bench_argot.c cosmology.c mpi_rank.c \
 	make_directory.c output_data.c timing.c io_posix.c run_param.h \
 	cosmology.h source.h fluid.h chemistry.h cross_section.h \
 	mpi_param.h prototype.h constants.h radiation.h io_ops.h \
 	io_gfarm.c
-@GFARM_TRUE@am__objects_1 = io_gfarm.$(OBJEXT)
 am_io_bench_argot_OBJECTS = init_mpi.$(OBJEXT) init_run.$(OBJEXT) \
 	input_data.$(OBJEXT) input_params.$(OBJEXT) \
 	io_bench_argot.$(OBJEXT) cosmology.$(OBJEXT) \
@@ -112,10 +123,6 @@ am_io_bench_argot_OBJECTS = init_mpi.$(OBJEXT) init_run.$(OBJEXT) \
 	$(am__objects_1)
 io_bench_argot_OBJECTS = $(am_io_bench_argot_OBJECTS)
 io_bench_argot_LDADD = $(LDADD)
-AM_V_lt = $(am__v_lt_@AM_V@)
-am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
-am__v_lt_0 = --silent
-am__v_lt_1 = 
 am__setup_IC_SOURCES_DIST = uniform_medium_IC.c output_data.c \
 	mpi_rank.c make_directory.c source.c timing.c io_posix.c \
 	run_param.h cosmology.h source.h fluid.h chemistry.h \
@@ -161,8 +168,10 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(io_bench_argot_SOURCES) $(setup_IC_SOURCES)
-DIST_SOURCES = $(am__io_bench_argot_SOURCES_DIST) \
+SOURCES = $(argot_io_SOURCES) $(io_bench_argot_SOURCES) \
+	$(setup_IC_SOURCES)
+DIST_SOURCES = $(am__argot_io_SOURCES_DIST) \
+	$(am__io_bench_argot_SOURCES_DIST) \
 	$(am__setup_IC_SOURCES_DIST)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
@@ -317,6 +326,7 @@ setup_IC_SOURCES = uniform_medium_IC.c output_data.c mpi_rank.c \
 	cosmology.h source.h fluid.h chemistry.h cross_section.h \
 	mpi_param.h prototype.h constants.h radiation.h io_ops.h \
 	$(am__append_2)
+argot_io_SOURCES = argot-io.c io_posix.c io_ops.h $(am__append_3)
 AM_CFLAGS = -O3 -funroll-loops -std=c99 -mcmodel=medium
 ACLOCAL_AMFLAGS = -I m4
 all: config.h
@@ -419,6 +429,10 @@ clean-binPROGRAMS:
 	echo " rm -f" $$list; \
 	rm -f $$list
 
+argot-io$(EXEEXT): $(argot_io_OBJECTS) $(argot_io_DEPENDENCIES) $(EXTRA_argot_io_DEPENDENCIES) 
+	@rm -f argot-io$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(argot_io_OBJECTS) $(argot_io_LDADD) $(LIBS)
+
 io_bench_argot$(EXEEXT): $(io_bench_argot_OBJECTS) $(io_bench_argot_DEPENDENCIES) $(EXTRA_io_bench_argot_DEPENDENCIES) 
 	@rm -f io_bench_argot$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(io_bench_argot_OBJECTS) $(io_bench_argot_LDADD) $(LIBS)
@@ -433,6 +447,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/argot-io.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cosmology.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/init_mpi.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/init_run.Po@am__quote@
