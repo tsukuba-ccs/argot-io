@@ -54,7 +54,12 @@
 
 #define HIGH_MACH_THRESHOLD (0.1)
 #define SHOCK_PRESS_THRESHOLD (0.3)
-#define COURANT_FACT (0.2)
+#define COURANT_FACT (0.1)
+
+// HLLC flag
+//#define __ACOUSTIC_TYPE__
+#define __TWO_RAREFACTION__
+//#define __TWO_SCHOCK__
 
 /* parameters for limiter */
 #define KAPPA    (-2.5)
@@ -108,7 +113,7 @@ struct fluid_mesh_io {
   float dens;
   float eneg;
   float momx, momy, momz;
-  float pot;
+  float uene, pot;
   struct prim_chem chem;
 };
 

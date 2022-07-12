@@ -10,6 +10,7 @@
 void input_params(struct run_param *this_run, char *param_filename)
 {
   FILE *param_file;
+  int ret;
 
   param_file = fopen(param_filename, "r");
 
@@ -22,7 +23,7 @@ void input_params(struct run_param *this_run, char *param_filename)
 
   /* set the model name */
   this_run->model_name = (char *) malloc(sizeof(char)*MAX_MODEL_NAME_LEN);
-  fscanf(param_file,"%s",this_run->model_name);
+  ret = fscanf(param_file,"%s",this_run->model_name);
 
   static char diag_filename[256];
   sprintf(diag_filename,"%s.diag", this_run->model_name);
@@ -32,7 +33,7 @@ void input_params(struct run_param *this_run, char *param_filename)
 
   /* set nmesh_per_loop */
   int ngrp;
-  fscanf(param_file, "%d", &ngrp);
+  ret = fscanf(param_file, "%d", &ngrp);
   this_run->nmesh_per_loop = NMESH_LOCAL/ngrp;
   if((NMESH_LOCAL % this_run->nmesh_per_loop) != 0) {
     fprintf(this_run->proc_file, 
@@ -42,7 +43,7 @@ void input_params(struct run_param *this_run, char *param_filename)
   }
 
   /* # of output timing */
-  fscanf(param_file,"%d",&(this_run->noutput));
+  ret = fscanf(param_file,"%d",&(this_run->noutput));
 
   this_run->output_timing = (float *) malloc(sizeof(float)*this_run->noutput);
 
@@ -53,7 +54,7 @@ void input_params(struct run_param *this_run, char *param_filename)
 
   for(iout=0;iout<this_run->noutput;iout++) {
 
-    fscanf(param_file,"%f",&(this_run->output_timing[iout]));
+    ret = fscanf(param_file,"%f",&(this_run->output_timing[iout]));
 
 #ifdef __COSMOLOGICAL__
     if(iout>0 && this_run->output_timing[iout] > prev_output_timing) {

@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <sys/time.h>
 #include <sys/times.h>
+#include <inttypes.h>
 
 #include "run_param.h"
 #include "fluid.h"
@@ -221,7 +222,7 @@ void input_src(struct radiation_src *src, struct run_param *this_run,
 
   if(this_run->nsrc > NSOURCE_MAX) {
     fprintf(stderr, "# Exceeds the max. number of the sources\n");
-    fprintf(stderr, "# input_nsrc = %llu\n", this_run->nsrc);
+    fprintf(stderr, "# input_nsrc = %" PRIu64 "\n", this_run->nsrc);
     exit(EXIT_FAILURE);
   }
 
@@ -257,7 +258,7 @@ void input_src_file(struct radiation_src *src, struct run_param *this_run,
 
   if(this_run->nsrc > NSOURCE_MAX) {
     fprintf(stderr, "# Exceeds the max. number of the sources\n");
-    fprintf(stderr, "# input_nsrc = %llu\n", this_run->nsrc);
+    fprintf(stderr, "# input_nsrc = %" PRIu64 "\n", this_run->nsrc);
     exit(EXIT_FAILURE);
   }
 
