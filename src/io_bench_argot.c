@@ -68,7 +68,8 @@ int main(int argc, char **argv)
 
   while(this_run.tnow < 0.5) {
 
-    sleep(1);
+    fluid_integrate(mesh, &this_run, &this_mpi, dtime);
+    dtime = calc_timestep_fluid(mesh, &this_run);
 
     this_run.tnow += dtime;
     MPI_Barrier(MPI_COMM_WORLD);

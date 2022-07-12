@@ -23,7 +23,7 @@ int main(int argc, char **argv)
   //  static struct radiation_src src[NSOURCE_MAX];
   struct radiation_src *src;
 
-  static char model_name[256],label[256],dir_name[256];
+  static char model_name[256],label[1024],dir_name[256];
 
   double nH, tmpr;
   char *api = "posix", *program;
@@ -42,7 +42,7 @@ int main(int argc, char **argv)
   argv += optind;
 
   if(argc != 1) {
-    fprintf(stderr,"Usage: %s <prefix>", program);
+    fprintf(stderr,"Usage: %s <prefix>\n", program);
     exit(EXIT_FAILURE);
   }
 
