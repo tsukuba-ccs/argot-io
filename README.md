@@ -41,7 +41,7 @@ The initial data will be generated in ./io_bench-init directory.
 ```
 % mpiexec -n 8 io_bench_argot io_bench-init/io_bench-init io_bench.pars
 ```
-The input file io_bench.pars is included in the bin directory.
+The input file io_bench.pars is included in the work directory.
 
 3. The performance number is the last line of io_bench-out/out_000_000_000
    file.

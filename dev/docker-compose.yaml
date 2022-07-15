@@ -1,0 +1,85 @@
+x-common:
+  &x-common
+  build:
+    context: ..
+    dockerfile: dev/Dockerfile
+    args:
+      USERNAME: $USER
+  volumes:
+    - type: bind
+      source: ../work
+      target: /home/$USER/work
+  init: true
+  networks:
+    argot_net:
+  privileged: false
+  command: >
+    bash -c "sudo service ssh restart && sleep infinity"
+  extra_hosts:
+    - c1:172.30.3.2
+    - c2:172.30.3.3
+    - c3:172.30.3.4
+    - c4:172.30.3.5
+    - c5:172.30.3.6
+    - c6:172.30.3.7
+    - c7:172.30.3.8
+    - c8:172.30.3.9
+
+services:
+  c1:
+    <<: *x-common
+    hostname: c1
+    networks:
+      argot_net:
+        ipv4_address: 172.30.3.2
+  c2:
+    <<: *x-common
+    hostname: c2
+    networks:
+      argot_net:
+        ipv4_address: 172.30.3.3
+  c3:
+    <<: *x-common
+    hostname: c3
+    networks:
+      argot_net:
+        ipv4_address: 172.30.3.4
+  c4:
+    <<: *x-common
+    hostname: c4
+    networks:
+      argot_net:
+        ipv4_address: 172.30.3.5
+  c5:
+    <<: *x-common
+    hostname: c5
+    networks:
+      argot_net:
+        ipv4_address: 172.30.3.6
+  c6:
+    <<: *x-common
+    hostname: c6
+    networks:
+      argot_net:
+        ipv4_address: 172.30.3.7
+  c7:
+    <<: *x-common
+    hostname: c7
+    networks:
+      argot_net:
+        ipv4_address: 172.30.3.8
+  c8:
+    <<: *x-common
+    hostname: c8
+    networks:
+      argot_net:
+        ipv4_address: 172.30.3.9
+
+networks:
+  argot_net:
+    name: argot_net
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.30.3.0/24
