@@ -25,6 +25,7 @@ application.
 
 2. Compile the program by configure and make.
 ```
+% autoreconf -i
 % ./configure
 % make
 ```
