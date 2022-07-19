@@ -35,6 +35,7 @@ USER $USERNAME
 RUN cd \
 # && git clone https://github.com/tsukuba-ccs/argot-io.git \
  && cd argot-io \
+ && autoreconf -i \
  && ./configure \
  && make \
  && sudo make install \
