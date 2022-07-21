@@ -80,8 +80,7 @@ posix_unlink(char *fn)
 	return (unlink(fn));
 }
 
-struct io_ops io_ops_posix =
-{
+struct io_ops io_ops_posix = {
 	.init = posix_init,
 	.term = posix_term,
 	.write_open = posix_write_open,
@@ -96,7 +95,7 @@ struct io_ops io_ops_posix =
 struct io_ops *
 io_posix(void)
 {
-	return(&io_ops_posix);
+	return (&io_ops_posix);
 }
 
 struct io_ops *io_ops;

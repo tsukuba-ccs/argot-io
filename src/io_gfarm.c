@@ -126,8 +126,7 @@ gfarm_unlink(char *fn)
 	return (-1);
 }
 
-struct io_ops io_ops_gfarm =
-{
+struct io_ops io_ops_gfarm = {
 	.init = gfarm_init,
 	.term = gfarm_term,
 	.write_open = gfarm_write_open,
@@ -142,5 +141,5 @@ struct io_ops io_ops_gfarm =
 struct io_ops *
 io_gfarm(void)
 {
-	return(&io_ops_gfarm);
+	return (&io_ops_gfarm);
 }
