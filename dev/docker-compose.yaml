@@ -12,6 +12,10 @@ x-common:
   init: true
   networks:
     argot_net:
+  cap_add:
+    - SYS_ADMIN
+  devices:
+    - /dev/fuse
   privileged: false
   command: >
     bash -c "sudo service ssh restart && sleep infinity"

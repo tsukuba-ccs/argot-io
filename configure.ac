@@ -46,5 +46,11 @@ if test x$with_gfarm != xno; then
   AC_CHECK_LIB([gfarm], [gfarm_initialize],, [AC_MSG_ERROR([libgfarm not found])])
 fi
 
+# CHFS support
+PKG_CHECK_MODULES([CHFS], [chfs],
+  [AC_DEFINE([HAVE_CHFS], [], [Build CHFS backend])],
+  [with_chfs=no])
+AM_CONDITIONAL([CHFS], [test x$with_chfs != xno])
+
 AC_CONFIG_FILES([Makefile src/Makefile])
 AC_OUTPUT

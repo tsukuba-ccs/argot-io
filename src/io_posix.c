@@ -102,6 +102,9 @@ struct io_ops *io_ops;
 #ifdef HAVE_LIBGFARM
 struct io_ops *io_gfarm(void);
 #endif
+#ifdef HAVE_CHFS
+struct io_ops *io_chfs(void);
+#endif
 
 void
 init_io_ops(char *api)
@@ -111,6 +114,10 @@ init_io_ops(char *api)
 #ifdef HAVE_LIBGFARM
 	else if (strcmp(api, "gfarm") == 0)
 		io_ops = io_gfarm();
+#endif
+#ifdef HAVE_CHFS
+	else if (strcmp(api, "chfs") == 0)
+		io_ops = io_chfs();
 #endif
 	if (io_ops == NULL)
 		fprintf(stderr, "%s: not supported\n", api), exit(EXIT_FAILURE);
