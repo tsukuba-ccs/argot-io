@@ -118,6 +118,13 @@ void output_data_in_run(struct fluid_mesh *mesh,
     MPI_Allreduce(MPI_IN_PLACE, &data_size, 1, MPI_LONG_LONG_INT, MPI_SUM, MPI_COMM_WORLD);
     this_run->output_file_size += data_size;
 
+    int io_check = verify_output(mesh, this_run, prefix_stamp);
+    if(io_check != 0) {
+      fprintf(this_run->proc_file,
+	      "# Invalid IO detected.\n");
+      fflush(this_run->proc_file);
+    }    
+
     fprintf(this_run->proc_file, 
 	    "# dumping files at t = %14.6e : %14.6e [sec] : %14.6e [GB/sec] \n",
 	    this_run->tnow, walltime, mesh_data_size/walltime/1.0e9);
@@ -149,6 +156,14 @@ void output_data_in_run(struct fluid_mesh *mesh,
     data_size = mesh_data_size;
     MPI_Allreduce(MPI_IN_PLACE, &data_size, 1, MPI_LONG_LONG_INT, MPI_SUM, MPI_COMM_WORLD);
     this_run->output_file_size += data_size;
+
+    int io_check = verify_output(mesh, this_run, prefix_stamp);
+    if(io_check != 0) {
+      fprintf(this_run->proc_file,
+	      "# Invalid IO detected.\n");
+    }else{
+      fprintf(this_run->proc_file, "# IO verification passed\n");
+    }
 
     fprintf(this_run->proc_file, 
 	    "# dumping files at t = %14.6e : %14.6e [sec] : %14.6e [GB/sec] \n",
