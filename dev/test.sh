@@ -11,10 +11,10 @@ cd work
 rm -rf dmp io_bench-* io_bench.diag
 
 #setup_IC io_bench
-#mpirun -x LD_LIBRARY_PATH -np 8 -hostfile $HOME/hosts -map-by node io_bench_argot io_bench-init/io_bench-init io_bench.pars
+#mpirun -np 8 -hostfile $HOME/hosts -map-by node io_bench_argot io_bench-init/io_bench-init io_bench.pars
 
 setup_IC -a chfs io_bench
-mpirun -x LD_LIBRARY_PATH -x CHFS_SERVER -x CHFS_CHUNK_SIZE -x CHFS_BUF_SIZE \
+mpirun -x CHFS_SERVER -x CHFS_CHUNK_SIZE -x CHFS_BUF_SIZE \
 	-np 8 -hostfile $HOME/hosts -map-by node io_bench_argot -a chfs \
 	io_bench-init/io_bench-init io_bench.pars
 

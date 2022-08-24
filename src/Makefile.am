@@ -25,7 +25,7 @@ io_bench_argot_SOURCES += io_chfs.c
 setup_IC_SOURCES += io_chfs.c
 argot_io_SOURCES += io_chfs.c
 AM_CFLAGS += @CHFS_CFLAGS@
-AM_LDFLAGS = @CHFS_LIBS@
+AM_LDFLAGS = @CHFS_RPATH@ @CHFS_LIBS@
 endif
 ACLOCAL_AMFLAGS = -I m4
 

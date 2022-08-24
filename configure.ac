@@ -48,7 +48,9 @@ fi
 
 # CHFS support
 PKG_CHECK_MODULES([CHFS], [chfs],
-  [AC_DEFINE([HAVE_CHFS], [], [Build CHFS backend])],
+  [AC_DEFINE([HAVE_CHFS], [], [Build CHFS backend])
+   CHFS_RPATH=$(pkg-config --libs-only-L chfs | sed 's/-L/-Wl,-rpath=/g')
+   AC_SUBST(CHFS_RPATH)],
   [with_chfs=no])
 AM_CONDITIONAL([CHFS], [test x$with_chfs != xno])
 
