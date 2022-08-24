@@ -62,6 +62,7 @@ void fluid_integrate(struct fluid_mesh*, struct run_param*, struct mpi_param*, f
 float calc_mem_size_for_radiation(struct radiation_src*, struct run_param*, int);
 int get_optimal_nmesh_per_loop(struct radiation_src*, struct run_param*);
 void set_optimal_nmesh_per_loop(struct radiation_src*, struct run_param*);
+int verify_output(struct fluid_mesh*, struct run_param*, char*);
 
 
 
