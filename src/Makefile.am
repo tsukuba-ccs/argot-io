@@ -14,7 +14,7 @@ setup_IC_SOURCES = uniform_medium_IC.c output_data.c input_data.c \
 	mpi_param.h prototype.h constants.h radiation.h \
 	io_ops.h
 argot_io_SOURCES = argot-io.c io_posix.c io_ops.h
-AM_CFLAGS = -O3 -funroll-loops -std=c99 -mcmodel=medium -D__SECOND_ORDER_RUNGE_KUTTA__
+AM_CFLAGS = @OPENMP_CFLAGS@ -O3 -funroll-loops -std=c99 -mcmodel=medium -D__SECOND_ORDER_RUNGE_KUTTA__
 if GFARM
 io_bench_argot_SOURCES += io_gfarm.c
 setup_IC_SOURCES += io_gfarm.c

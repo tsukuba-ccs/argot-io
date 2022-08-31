@@ -16,7 +16,7 @@ int verify_mesh_data(struct fluid_mesh *mesh1, struct fluid_mesh *mesh2)
 {
   int result = 0;
 
-#pragma omp parallel for reduce(result:+)
+#pragma omp parallel for reduction(+:result)
   for(int im=0;im<NMESH_LOCAL;im++) {
     if(mesh1[im].dens != mesh2[im].dens) result += 1;
     if(mesh1[im].eneg != mesh2[im].eneg) result += 1;
