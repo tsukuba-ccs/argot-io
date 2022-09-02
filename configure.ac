@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([argot-io], [1.0.0])
+AC_INIT([argot-io],[1.0.0])
 AM_INIT_AUTOMAKE([foreign])
 AC_CONFIG_SRCDIR([README.md])
 AC_CONFIG_HEADERS([src/config.h])
@@ -11,7 +11,7 @@ AC_CONFIG_MACRO_DIR([m4])
 # Checks for programs.
 AC_PROG_CC
 AC_OPENMP
-AC_PROG_LIBTOOL
+LT_INIT
 AX_MPI
 
 # Checks for libraries.
