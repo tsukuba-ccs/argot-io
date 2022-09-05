@@ -28,14 +28,14 @@ struct fluid_flux {
 
 float gamma_total(struct fluid_mesh*, struct run_param*);
 void set_pad_x(struct pad_region*, struct fluid_mesh*,
-	       struct fluid_mesh**, struct fluid_mesh**, struct fluid_mesh**,
-	       struct fluid_mesh**, int, int, int, struct run_param*);
+	       struct fluid_mesh*, struct fluid_mesh*, struct fluid_mesh*,
+	       struct fluid_mesh*, int, int, int, struct run_param*);
 void set_pad_y(struct pad_region*, struct fluid_mesh*,
-	       struct fluid_mesh**, struct fluid_mesh**, struct fluid_mesh**,
-	       struct fluid_mesh**, int, int, int, struct run_param*);
-void set_pad_z(struct pad_region*, struct fluid_mesh*, struct fluid_mesh**,
-	       struct fluid_mesh**, struct fluid_mesh**,
-	       struct fluid_mesh**, int, int, int, struct run_param*);
+	       struct fluid_mesh*, struct fluid_mesh*, struct fluid_mesh*,
+	       struct fluid_mesh*, int, int, int, struct run_param*);
+void set_pad_z(struct pad_region*, struct fluid_mesh*, struct fluid_mesh*,
+	       struct fluid_mesh*, struct fluid_mesh*,
+	       struct fluid_mesh*, int, int, int, struct run_param*);
 
 float gamma_total(struct fluid_mesh *mesh, struct run_param *this_run)
 {
@@ -201,7 +201,7 @@ void calc_flux_x(struct fluid_mesh *mesh, struct pad_region *pad,
 		 struct fluid_flux *flux_plus, struct fluid_flux *flux_minus, 
 		 struct run_param *this_run, int *shock)
 {
-  struct fluid_mesh *mesh_im2,*mesh_im1,*mesh_i,*mesh_ip1,*mesh_ip2;
+  struct fluid_mesh mesh_im2, mesh_im1, *mesh_i, mesh_ip1, mesh_ip2;
   struct fluid_mesh reflect_lo, reflect_hi;
 
   float pres_im2,pres_im1,pres_i,pres_ip1,pres_ip2;
@@ -243,47 +243,47 @@ void calc_flux_x(struct fluid_mesh *mesh, struct pad_region *pad,
 	    ix, iy, iz, this_run);
   
   /* adabatic index */
-  gamma_im2 = gamma_total(mesh_im2, this_run); gamm1_im2 = gamma_im2-1.0;
-  gamma_im1 = gamma_total(mesh_im1, this_run); gamm1_im1 = gamma_im1-1.0;
+  gamma_im2 = gamma_total(&mesh_im2, this_run); gamm1_im2 = gamma_im2-1.0;
+  gamma_im1 = gamma_total(&mesh_im1, this_run); gamm1_im1 = gamma_im1-1.0;
   gamma_i   = gamma_total(mesh_i  , this_run); gamm1_i   = gamma_i  -1.0;
-  gamma_ip1 = gamma_total(mesh_ip1, this_run); gamm1_ip1 = gamma_ip1-1.0;
-  gamma_ip2 = gamma_total(mesh_ip2, this_run); gamm1_ip2 = gamma_ip2-1.0;
+  gamma_ip1 = gamma_total(&mesh_ip1, this_run); gamm1_ip1 = gamma_ip1-1.0;
+  gamma_ip2 = gamma_total(&mesh_ip2, this_run); gamm1_ip2 = gamma_ip2-1.0;
 
   gamma  = gamma_i;
   gamma1 = gamm1_i;
   
   /*-- pressure --*/
-  pres_im2 = fmaxf(gamm1_im2*mesh_im2->uene*mesh_im2->dens, FLUID_TINY);
-  pres_im1 = fmaxf(gamm1_im1*mesh_im1->uene*mesh_im1->dens, FLUID_TINY);
+  pres_im2 = fmaxf(gamm1_im2*mesh_im2.uene*mesh_im2.dens, FLUID_TINY);
+  pres_im1 = fmaxf(gamm1_im1*mesh_im1.uene*mesh_im1.dens, FLUID_TINY);
   pres_i   = fmaxf(gamm1_i  *mesh_i->uene*mesh_i->dens    , FLUID_TINY);
-  pres_ip1 = fmaxf(gamm1_ip1*mesh_ip1->uene*mesh_ip1->dens, FLUID_TINY);
-  pres_ip2 = fmaxf(gamm1_ip2*mesh_ip2->uene*mesh_ip2->dens, FLUID_TINY);
+  pres_ip1 = fmaxf(gamm1_ip1*mesh_ip1.uene*mesh_ip1.dens, FLUID_TINY);
+  pres_ip2 = fmaxf(gamm1_ip2*mesh_ip2.uene*mesh_ip2.dens, FLUID_TINY);
 
   /*-- velocity --*/
-  velx_im2 = mesh_im2->momx/mesh_im2->dens;
-  velx_im1 = mesh_im1->momx/mesh_im1->dens;
+  velx_im2 = mesh_im2.momx/mesh_im2.dens;
+  velx_im1 = mesh_im1.momx/mesh_im1.dens;
   velx_i   = mesh_i->momx/mesh_i->dens;
-  velx_ip1 = mesh_ip1->momx/mesh_ip1->dens;
-  velx_ip2 = mesh_ip2->momx/mesh_ip2->dens;
+  velx_ip1 = mesh_ip1.momx/mesh_ip1.dens;
+  velx_ip2 = mesh_ip2.momx/mesh_ip2.dens;
 
-  vely_im2 = mesh_im2->momy/mesh_im2->dens;
-  vely_im1 = mesh_im1->momy/mesh_im1->dens;
+  vely_im2 = mesh_im2.momy/mesh_im2.dens;
+  vely_im1 = mesh_im1.momy/mesh_im1.dens;
   vely_i   = mesh_i->momy/mesh_i->dens;
-  vely_ip1 = mesh_ip1->momy/mesh_ip1->dens;
-  vely_ip2 = mesh_ip2->momy/mesh_ip2->dens;
+  vely_ip1 = mesh_ip1.momy/mesh_ip1.dens;
+  vely_ip2 = mesh_ip2.momy/mesh_ip2.dens;
 
-  velz_im2 = mesh_im2->momz/mesh_im2->dens;
-  velz_im1 = mesh_im1->momz/mesh_im1->dens;
+  velz_im2 = mesh_im2.momz/mesh_im2.dens;
+  velz_im1 = mesh_im1.momz/mesh_im1.dens;
   velz_i   = mesh_i->momz/mesh_i->dens;
-  velz_ip1 = mesh_ip1->momz/mesh_ip1->dens;
-  velz_ip2 = mesh_ip2->momz/mesh_ip2->dens;
+  velz_ip1 = mesh_ip1.momz/mesh_ip1.dens;
+  velz_ip2 = mesh_ip2.momz/mesh_ip2.dens;
 
   /* chemical species */
-  set_ndens(mesh_im2, ndens_im2);
-  set_ndens(mesh_im1, ndens_im1);
+  set_ndens(&mesh_im2, ndens_im2);
+  set_ndens(&mesh_im1, ndens_im1);
   set_ndens(mesh_i,   ndens_i);
-  set_ndens(mesh_ip1, ndens_ip1);
-  set_ndens(mesh_ip2, ndens_ip2);
+  set_ndens(&mesh_ip1, ndens_ip1);
+  set_ndens(&mesh_ip2, ndens_ip2);
 
   /* shock detection */
   *shock = 0;
@@ -292,7 +292,7 @@ void calc_flux_x(struct fluid_mesh *mesh, struct pad_region *pad,
 
   /*-- numerical flux at i+1/2 --*/
   /* left values */
-  dens_L = MUSCL_L(mesh_im1->dens, mesh_i->dens, mesh_ip1->dens);
+  dens_L = MUSCL_L(mesh_im1.dens, mesh_i->dens, mesh_ip1.dens);
   velx_L = MUSCL_L(velx_im1,       velx_i,       velx_ip1);
   vely_L = MUSCL_L(vely_im1,       vely_i,       vely_ip1);
   velz_L = MUSCL_L(velz_im1,       velz_i,       velz_ip1);
@@ -313,7 +313,7 @@ void calc_flux_x(struct fluid_mesh *mesh, struct pad_region *pad,
 				      
 
   /* right values */
-  dens_R = MUSCL_R(mesh_i->dens, mesh_ip1->dens, mesh_ip2->dens);
+  dens_R = MUSCL_R(mesh_i->dens, mesh_ip1.dens, mesh_ip2.dens);
   velx_R = MUSCL_R(velx_i,       velx_ip1,       velx_ip2);
   vely_R = MUSCL_R(vely_i,       vely_ip1,       vely_ip2);
   velz_R = MUSCL_R(velz_i,       velz_ip1,       velz_ip2);
@@ -444,7 +444,7 @@ void calc_flux_x(struct fluid_mesh *mesh, struct pad_region *pad,
 
   /*-- numerical flux at i-1/2 --*/
   /* left values */
-  dens_L = MUSCL_L(mesh_im2->dens, mesh_im1->dens, mesh_i->dens);
+  dens_L = MUSCL_L(mesh_im2.dens, mesh_im1.dens, mesh_i->dens);
   velx_L = MUSCL_L(velx_im2      , velx_im1      , velx_i      );
   vely_L = MUSCL_L(vely_im2      , vely_im1      , vely_i      );
   velz_L = MUSCL_L(velz_im2      , velz_im1      , velz_i      );
@@ -464,7 +464,7 @@ void calc_flux_x(struct fluid_mesh *mesh, struct pad_region *pad,
   }
 
   /* right values */
-  dens_R = MUSCL_R(mesh_im1->dens, mesh_i->dens, mesh_ip1->dens);
+  dens_R = MUSCL_R(mesh_im1.dens, mesh_i->dens, mesh_ip1.dens);
   velx_R = MUSCL_R(velx_im1      , velx_i      , velx_ip1      );
   vely_R = MUSCL_R(vely_im1      , vely_i      , vely_ip1      );
   velz_R = MUSCL_R(velz_im1      , velz_i      , velz_ip1      );
@@ -602,7 +602,7 @@ void calc_flux_y(struct fluid_mesh *mesh, struct pad_region *pad,
 		 struct fluid_flux *flux_plus, struct fluid_flux *flux_minus,
 		 struct run_param *this_run, int *shock)
 {
-  struct fluid_mesh *mesh_im2,*mesh_im1,*mesh_i,*mesh_ip1,*mesh_ip2;
+  struct fluid_mesh mesh_im2, mesh_im1, *mesh_i, mesh_ip1, mesh_ip2;
   struct fluid_mesh reflect_lo, reflect_hi;
 
   float pres_im2,pres_im1,pres_i,pres_ip1,pres_ip2;
@@ -644,47 +644,47 @@ void calc_flux_y(struct fluid_mesh *mesh, struct pad_region *pad,
 	    ix, iy, iz, this_run);
 
   /* adabatic index */
-  gamma_im2 = gamma_total(mesh_im2, this_run); gamm1_im2 = gamma_im2-1.0;
-  gamma_im1 = gamma_total(mesh_im1, this_run); gamm1_im1 = gamma_im1-1.0;
+  gamma_im2 = gamma_total(&mesh_im2, this_run); gamm1_im2 = gamma_im2-1.0;
+  gamma_im1 = gamma_total(&mesh_im1, this_run); gamm1_im1 = gamma_im1-1.0;
   gamma_i   = gamma_total(mesh_i  , this_run); gamm1_i   = gamma_i  -1.0;
-  gamma_ip1 = gamma_total(mesh_ip1, this_run); gamm1_ip1 = gamma_ip1-1.0;
-  gamma_ip2 = gamma_total(mesh_ip2, this_run); gamm1_ip2 = gamma_ip2-1.0;
+  gamma_ip1 = gamma_total(&mesh_ip1, this_run); gamm1_ip1 = gamma_ip1-1.0;
+  gamma_ip2 = gamma_total(&mesh_ip2, this_run); gamm1_ip2 = gamma_ip2-1.0;
 
   gamma  = gamma_i;
   gamma1 = gamm1_i;
   
   /*-- pressure --*/
-  pres_im2 = fmaxf(gamm1_im2*mesh_im2->uene*mesh_im2->dens, FLUID_TINY);
-  pres_im1 = fmaxf(gamm1_im1*mesh_im1->uene*mesh_im1->dens, FLUID_TINY);
+  pres_im2 = fmaxf(gamm1_im2*mesh_im2.uene*mesh_im2.dens, FLUID_TINY);
+  pres_im1 = fmaxf(gamm1_im1*mesh_im1.uene*mesh_im1.dens, FLUID_TINY);
   pres_i   = fmaxf(gamm1_i  *mesh_i->uene*mesh_i->dens    , FLUID_TINY);
-  pres_ip1 = fmaxf(gamm1_ip1*mesh_ip1->uene*mesh_ip1->dens, FLUID_TINY);
-  pres_ip2 = fmaxf(gamm1_ip2*mesh_ip2->uene*mesh_ip2->dens, FLUID_TINY);
+  pres_ip1 = fmaxf(gamm1_ip1*mesh_ip1.uene*mesh_ip1.dens, FLUID_TINY);
+  pres_ip2 = fmaxf(gamm1_ip2*mesh_ip2.uene*mesh_ip2.dens, FLUID_TINY);
 
   /*-- velocity --*/
-  velx_im2 = mesh_im2->momx/mesh_im2->dens;
-  velx_im1 = mesh_im1->momx/mesh_im1->dens;
+  velx_im2 = mesh_im2.momx/mesh_im2.dens;
+  velx_im1 = mesh_im1.momx/mesh_im1.dens;
   velx_i   = mesh_i->momx/mesh_i->dens;
-  velx_ip1 = mesh_ip1->momx/mesh_ip1->dens;
-  velx_ip2 = mesh_ip2->momx/mesh_ip2->dens;
+  velx_ip1 = mesh_ip1.momx/mesh_ip1.dens;
+  velx_ip2 = mesh_ip2.momx/mesh_ip2.dens;
 
-  vely_im2 = mesh_im2->momy/mesh_im2->dens;
-  vely_im1 = mesh_im1->momy/mesh_im1->dens;
+  vely_im2 = mesh_im2.momy/mesh_im2.dens;
+  vely_im1 = mesh_im1.momy/mesh_im1.dens;
   vely_i   = mesh_i->momy/mesh_i->dens;
-  vely_ip1 = mesh_ip1->momy/mesh_ip1->dens;
-  vely_ip2 = mesh_ip2->momy/mesh_ip2->dens;
+  vely_ip1 = mesh_ip1.momy/mesh_ip1.dens;
+  vely_ip2 = mesh_ip2.momy/mesh_ip2.dens;
 
-  velz_im2 = mesh_im2->momz/mesh_im2->dens;
-  velz_im1 = mesh_im1->momz/mesh_im1->dens;
+  velz_im2 = mesh_im2.momz/mesh_im2.dens;
+  velz_im1 = mesh_im1.momz/mesh_im1.dens;
   velz_i   = mesh_i->momz/mesh_i->dens;
-  velz_ip1 = mesh_ip1->momz/mesh_ip1->dens;
-  velz_ip2 = mesh_ip2->momz/mesh_ip2->dens;
+  velz_ip1 = mesh_ip1.momz/mesh_ip1.dens;
+  velz_ip2 = mesh_ip2.momz/mesh_ip2.dens;
 
   /* chemical species */
-  set_ndens(mesh_im2, ndens_im2);
-  set_ndens(mesh_im1, ndens_im1);
+  set_ndens(&mesh_im2, ndens_im2);
+  set_ndens(&mesh_im1, ndens_im1);
   set_ndens(mesh_i,   ndens_i);
-  set_ndens(mesh_ip1, ndens_ip1);
-  set_ndens(mesh_ip2, ndens_ip2);
+  set_ndens(&mesh_ip1, ndens_ip1);
+  set_ndens(&mesh_ip2, ndens_ip2);
 
   /* shock detection */
   *shock = 0;
@@ -694,7 +694,7 @@ void calc_flux_y(struct fluid_mesh *mesh, struct pad_region *pad,
   /*-- numerical flux at i+1/2 --*/
 
   /* left values */
-  dens_L = MUSCL_L(mesh_im1->dens, mesh_i->dens, mesh_ip1->dens);
+  dens_L = MUSCL_L(mesh_im1.dens, mesh_i->dens, mesh_ip1.dens);
   velx_L = MUSCL_L(velx_im1, velx_i, velx_ip1);
   vely_L = MUSCL_L(vely_im1, vely_i, vely_ip1);
   velz_L = MUSCL_L(velz_im1, velz_i, velz_ip1);
@@ -714,7 +714,7 @@ void calc_flux_y(struct fluid_mesh *mesh, struct pad_region *pad,
   }
 
   /* right values */
-  dens_R = MUSCL_R(mesh_i->dens, mesh_ip1->dens, mesh_ip2->dens);
+  dens_R = MUSCL_R(mesh_i->dens, mesh_ip1.dens, mesh_ip2.dens);
   velx_R = MUSCL_R(velx_i, velx_ip1, velx_ip2);
   vely_R = MUSCL_R(vely_i, vely_ip1, vely_ip2);
   velz_R = MUSCL_R(velz_i, velz_ip1, velz_ip2);
@@ -844,7 +844,7 @@ void calc_flux_y(struct fluid_mesh *mesh, struct pad_region *pad,
 
   /*-- numerical flux at i-1/2 --*/
   /* left values */
-  dens_L = MUSCL_L(mesh_im2->dens, mesh_im1->dens, mesh_i->dens);
+  dens_L = MUSCL_L(mesh_im2.dens, mesh_im1.dens, mesh_i->dens);
   velx_L = MUSCL_L(velx_im2      , velx_im1      , velx_i      );
   vely_L = MUSCL_L(vely_im2      , vely_im1      , vely_i      );
   velz_L = MUSCL_L(velz_im2      , velz_im1      , velz_i      );
@@ -864,7 +864,7 @@ void calc_flux_y(struct fluid_mesh *mesh, struct pad_region *pad,
   }
 
   /* right values */
-  dens_R = MUSCL_R(mesh_im1->dens, mesh_i->dens, mesh_ip1->dens);
+  dens_R = MUSCL_R(mesh_im1.dens, mesh_i->dens, mesh_ip1.dens);
   velx_R = MUSCL_R(velx_im1      , velx_i      , velx_ip1      );
   vely_R = MUSCL_R(vely_im1      , vely_i      , vely_ip1      );
   velz_R = MUSCL_R(velz_im1      , velz_i      , velz_ip1      );
@@ -1003,7 +1003,7 @@ void calc_flux_z(struct fluid_mesh *mesh, struct pad_region *pad,
 		 struct fluid_flux *flux_plus, struct fluid_flux *flux_minus,
 		 struct run_param *this_run, int *shock) 
 {
-  struct fluid_mesh *mesh_im2,*mesh_im1,*mesh_i,*mesh_ip1,*mesh_ip2;
+  struct fluid_mesh mesh_im2, mesh_im1, *mesh_i, mesh_ip1, mesh_ip2;
   struct fluid_mesh reflect_lo, reflect_hi;
 
   float pres_im2,pres_im1,pres_i,pres_ip1,pres_ip2;
@@ -1045,47 +1045,47 @@ void calc_flux_z(struct fluid_mesh *mesh, struct pad_region *pad,
 	    ix, iy, iz, this_run);
 
   /* adabatic index */
-  gamma_im2 = gamma_total(mesh_im2, this_run); gamm1_im2 = gamma_im2-1.0;
-  gamma_im1 = gamma_total(mesh_im1, this_run); gamm1_im1 = gamma_im1-1.0;
+  gamma_im2 = gamma_total(&mesh_im2, this_run); gamm1_im2 = gamma_im2-1.0;
+  gamma_im1 = gamma_total(&mesh_im1, this_run); gamm1_im1 = gamma_im1-1.0;
   gamma_i   = gamma_total(mesh_i  , this_run); gamm1_i   = gamma_i  -1.0;
-  gamma_ip1 = gamma_total(mesh_ip1, this_run); gamm1_ip1 = gamma_ip1-1.0;
-  gamma_ip2 = gamma_total(mesh_ip2, this_run); gamm1_ip2 = gamma_ip2-1.0;
+  gamma_ip1 = gamma_total(&mesh_ip1, this_run); gamm1_ip1 = gamma_ip1-1.0;
+  gamma_ip2 = gamma_total(&mesh_ip2, this_run); gamm1_ip2 = gamma_ip2-1.0;
 
   gamma  = gamma_i;
   gamma1 = gamm1_i;
   
   /*-- pressure --*/
-  pres_im2 = fmaxf(gamm1_im2*mesh_im2->uene*mesh_im2->dens, FLUID_TINY);
-  pres_im1 = fmaxf(gamm1_im1*mesh_im1->uene*mesh_im1->dens, FLUID_TINY);
+  pres_im2 = fmaxf(gamm1_im2*mesh_im2.uene*mesh_im2.dens, FLUID_TINY);
+  pres_im1 = fmaxf(gamm1_im1*mesh_im1.uene*mesh_im1.dens, FLUID_TINY);
   pres_i   = fmaxf(gamm1_i  *mesh_i->uene*mesh_i->dens    , FLUID_TINY);
-  pres_ip1 = fmaxf(gamm1_ip1*mesh_ip1->uene*mesh_ip1->dens, FLUID_TINY);
-  pres_ip2 = fmaxf(gamm1_ip2*mesh_ip2->uene*mesh_ip2->dens, FLUID_TINY);
+  pres_ip1 = fmaxf(gamm1_ip1*mesh_ip1.uene*mesh_ip1.dens, FLUID_TINY);
+  pres_ip2 = fmaxf(gamm1_ip2*mesh_ip2.uene*mesh_ip2.dens, FLUID_TINY);
 
   /*-- velocity --*/
-  velx_im2 = mesh_im2->momx/mesh_im2->dens;
-  velx_im1 = mesh_im1->momx/mesh_im1->dens;
+  velx_im2 = mesh_im2.momx/mesh_im2.dens;
+  velx_im1 = mesh_im1.momx/mesh_im1.dens;
   velx_i   = mesh_i->momx/mesh_i->dens;
-  velx_ip1 = mesh_ip1->momx/mesh_ip1->dens;
-  velx_ip2 = mesh_ip2->momx/mesh_ip2->dens;
+  velx_ip1 = mesh_ip1.momx/mesh_ip1.dens;
+  velx_ip2 = mesh_ip2.momx/mesh_ip2.dens;
 
-  vely_im2 = mesh_im2->momy/mesh_im2->dens;
-  vely_im1 = mesh_im1->momy/mesh_im1->dens;
+  vely_im2 = mesh_im2.momy/mesh_im2.dens;
+  vely_im1 = mesh_im1.momy/mesh_im1.dens;
   vely_i   = mesh_i->momy/mesh_i->dens;
-  vely_ip1 = mesh_ip1->momy/mesh_ip1->dens;
-  vely_ip2 = mesh_ip2->momy/mesh_ip2->dens;
+  vely_ip1 = mesh_ip1.momy/mesh_ip1.dens;
+  vely_ip2 = mesh_ip2.momy/mesh_ip2.dens;
 
-  velz_im2 = mesh_im2->momz/mesh_im2->dens;
-  velz_im1 = mesh_im1->momz/mesh_im1->dens;
+  velz_im2 = mesh_im2.momz/mesh_im2.dens;
+  velz_im1 = mesh_im1.momz/mesh_im1.dens;
   velz_i   = mesh_i->momz/mesh_i->dens;
-  velz_ip1 = mesh_ip1->momz/mesh_ip1->dens;
-  velz_ip2 = mesh_ip2->momz/mesh_ip2->dens;
+  velz_ip1 = mesh_ip1.momz/mesh_ip1.dens;
+  velz_ip2 = mesh_ip2.momz/mesh_ip2.dens;
 
   /* chemical species */
-  set_ndens(mesh_im2, ndens_im2);
-  set_ndens(mesh_im1, ndens_im1);
+  set_ndens(&mesh_im2, ndens_im2);
+  set_ndens(&mesh_im1, ndens_im1);
   set_ndens(mesh_i,   ndens_i);
-  set_ndens(mesh_ip1, ndens_ip1);
-  set_ndens(mesh_ip2, ndens_ip2);
+  set_ndens(&mesh_ip1, ndens_ip1);
+  set_ndens(&mesh_ip2, ndens_ip2);
 
   /* shock detection */
   *shock = 0;
@@ -1095,7 +1095,7 @@ void calc_flux_z(struct fluid_mesh *mesh, struct pad_region *pad,
   /*-- numerical flux at i+1/2 --*/
 
   /* left values */
-  dens_L = MUSCL_L(mesh_im1->dens, mesh_i->dens, mesh_ip1->dens);
+  dens_L = MUSCL_L(mesh_im1.dens, mesh_i->dens, mesh_ip1.dens);
   velx_L = MUSCL_L(velx_im1, velx_i, velx_ip1);
   vely_L = MUSCL_L(vely_im1, vely_i, vely_ip1);
   velz_L = MUSCL_L(velz_im1, velz_i, velz_ip1);
@@ -1115,7 +1115,7 @@ void calc_flux_z(struct fluid_mesh *mesh, struct pad_region *pad,
   }
 
   /* right values */
-  dens_R = MUSCL_R(mesh_i->dens, mesh_ip1->dens, mesh_ip2->dens);
+  dens_R = MUSCL_R(mesh_i->dens, mesh_ip1.dens, mesh_ip2.dens);
   velx_R = MUSCL_R(velx_i, velx_ip1, velx_ip2);
   vely_R = MUSCL_R(vely_i, vely_ip1, vely_ip2);
   velz_R = MUSCL_R(velz_i, velz_ip1, velz_ip2);
@@ -1246,7 +1246,7 @@ void calc_flux_z(struct fluid_mesh *mesh, struct pad_region *pad,
   /*-- numerical flux at i-1/2 --*/
 
   /* left values */
-  dens_L = MUSCL_L(mesh_im2->dens, mesh_im1->dens, mesh_i->dens);
+  dens_L = MUSCL_L(mesh_im2.dens, mesh_im1.dens, mesh_i->dens);
   velx_L = MUSCL_L(velx_im2      , velx_im1      , velx_i      );
   vely_L = MUSCL_L(vely_im2      , vely_im1      , vely_i      );
   velz_L = MUSCL_L(velz_im2      , velz_im1      , velz_i      );
@@ -1266,7 +1266,7 @@ void calc_flux_z(struct fluid_mesh *mesh, struct pad_region *pad,
   }
 
   /* right values */
-  dens_R = MUSCL_R(mesh_im1->dens, mesh_i->dens, mesh_ip1->dens);
+  dens_R = MUSCL_R(mesh_im1.dens, mesh_i->dens, mesh_ip1.dens);
   velx_R = MUSCL_R(velx_im1      , velx_i      , velx_ip1      );
   vely_R = MUSCL_R(vely_im1      , vely_i      , vely_ip1      );
   velz_R = MUSCL_R(velz_im1      , velz_i      , velz_ip1      );
