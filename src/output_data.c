@@ -123,7 +123,9 @@ void output_data_in_run(struct fluid_mesh *mesh,
       fprintf(this_run->proc_file,
 	      "# Invalid IO detected.\n");
       fflush(this_run->proc_file);
-    }    
+    }else{
+      fprintf(this_run->proc_file, "# IO verification passed\n");
+    }
 
     fprintf(this_run->proc_file, 
 	    "# dumping files at t = %14.6e : %14.6e [sec] : %14.6e [GB/sec] \n",

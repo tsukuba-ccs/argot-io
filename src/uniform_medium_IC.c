@@ -186,16 +186,36 @@ int main(int argc, char **argv)
 	    for(iz=0;iz<NMESH_Z_LOCAL;iz++) {
 	      struct fluid_mesh *tgt;
 
-	      tgt = &MESH(ix,iy,iz);
+	      float xpos = this_run.xmin_local + ((float)ix+0.5)*this_run.delta_x;
+	      float ypos = this_run.ymin_local + ((float)iy+0.5)*this_run.delta_y;
+	      float zpos = this_run.zmin_local + ((float)iz+0.5)*this_run.delta_z;
+	      if( fabsf(xpos-0.5) < 0.25 &&
+		  fabsf(ypos-0.5) < 0.25 &&
+		  fabsf(zpos-0.5) < 0.25) {
+		    
 
-	      tgt->dens = nH/this_run.denstonh;
-	      tgt->momx = 0.0;
-	      tgt->momy = 0.0;
-	      tgt->momz = 0.0;
-	      tgt->uene = tmpr/(this_run.uenetok*WMOL(ioneq_chem));
-	      tgt->eneg = tgt->dens*tgt->uene;
-	      tgt->chem = ioneq_chem;
-	      tgt->prev_chem = ioneq_chem;
+		tgt = &MESH(ix,iy,iz);
+
+		tgt->dens = 0.1*nH/this_run.denstonh;
+		tgt->momx = 0.0;
+		tgt->momy = 0.0;
+		tgt->momz = 0.0;
+		tgt->uene = tmpr/(this_run.uenetok*WMOL(ioneq_chem));
+		tgt->eneg = tgt->dens*tgt->uene;
+		tgt->chem = ioneq_chem;
+		tgt->prev_chem = ioneq_chem;
+	      }else{
+		tgt = &MESH(ix,iy,iz);
+
+		tgt->dens = nH/this_run.denstonh;
+		tgt->momx = 0.0;
+		tgt->momy = 0.0;
+		tgt->momz = 0.0;
+		tgt->uene = tmpr/(this_run.uenetok*WMOL(ioneq_chem));
+		tgt->eneg = tgt->dens*tgt->uene;
+		tgt->chem = ioneq_chem;
+		tgt->prev_chem = ioneq_chem;
+	      }
 	    }
 	  }
 	}
