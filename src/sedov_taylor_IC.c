@@ -156,8 +156,8 @@ int main(int argc, char **argv)
   }
 #endif
 
-  sprintf(model_name, "%s", argv[1]);
-  sprintf(dir_name, "%s-init", argv[1]);
+  sprintf(model_name, "%s", argv[0]);
+  sprintf(dir_name, "%s-init", argv[0]);
   make_directory(dir_name);
   sprintf(label,"%s-init/%s-init",model_name,model_name);
 
