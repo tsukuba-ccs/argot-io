@@ -7,7 +7,7 @@ io_bench_argot_SOURCES = init_mpi.c init_run.c input_data.c \
 	run_param.h cosmology.h source.h fluid.h chemistry.h cross_section.h \
 	mpi_param.h prototype.h constants.h radiation.h \
 	io_ops.h
-setup_IC_SOURCES = sedov_taylor_IC.c output_data.c input_data.c \
+setup_IC_SOURCES = uniform_medium_IC.c output_data.c input_data.c \
 	mpi_rank.c make_directory.c source.c timing.c \
 	io_posix.c verify_output.c \
 	run_param.h cosmology.h source.h fluid.h chemistry.h cross_section.h \

@@ -12,7 +12,7 @@
 #include "prototype.h"
 #include "io_ops.h"
 
-int verify_mesh_data(struct fluid_mesh *mesh1, struct fluid_mesh *mesh2)
+int verify_mesh_data(struct fluid_mesh *mesh1, struct fluid_mesh *mesh2, struct run_param *this_run)
 {
   int result = 0;
 
@@ -23,7 +23,7 @@ int verify_mesh_data(struct fluid_mesh *mesh1, struct fluid_mesh *mesh2)
     if(mesh1[im].momx != mesh2[im].momx) result += 1;
     if(mesh1[im].momy != mesh2[im].momy) result += 1;
     if(mesh1[im].momz != mesh2[im].momz) result += 1;
-    if(mesh1[im].uene != mesh2[im].uene) result += 1;
+    //if(mesh1[im].uene != mesh2[im].uene) result += 1;
 #if 1
     if(mesh1[im].chem.wmol  != mesh2[im].chem.wmol ) result += 1;
     if(mesh1[im].chem.felec != mesh2[im].chem.felec) result += 1;
@@ -63,7 +63,10 @@ int verify_output(struct fluid_mesh *mesh, struct run_param *this_run,
   
   input_data(mesh_io, src_io, &run_io, prefix);
 
-  int result = verify_mesh_data(mesh, mesh_io);
+  int result = verify_mesh_data(mesh, mesh_io, this_run);
+
+  free(mesh_io);
+  free(src_io);
 
   return result;
 }
