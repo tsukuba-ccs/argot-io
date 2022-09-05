@@ -50,7 +50,7 @@ float timing(struct tms, struct tms);
 float wallclock_timing(struct timeval, struct timeval);
 int start_timing(struct timeval*, struct tms*);
 int end_timing(struct timeval*, struct timeval*, struct tms*, struct tms*, const char*, struct run_param*);
-double calc_timestep_fluid(struct fluid_mesh*, struct run_param*);
+float calc_timestep_fluid(struct fluid_mesh*, struct run_param*);
 void init_pad_region(struct pad_region*, struct run_param*);
 void update_pad_x(struct fluid_mesh*, struct pad_region*, struct run_param*, struct mpi_param*);
 void update_pad_y(struct fluid_mesh*, struct pad_region*, struct run_param*, struct mpi_param*);

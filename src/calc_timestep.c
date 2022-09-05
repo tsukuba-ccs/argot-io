@@ -13,11 +13,11 @@
 
 #define MESH(ix,iy,iz) (mesh[(iz)+NMESH_Z_LOCAL*((iy)+NMESH_Y_LOCAL*(ix))])
 
-double calc_timestep_fluid(struct fluid_mesh *mesh, struct run_param *this_run)
+float calc_timestep_fluid(struct fluid_mesh *mesh, struct run_param *this_run)
 {
-  double dtime_min;
+  float dtime_min;
 
-  dtime_min = DBL_MAX;
+  dtime_min = FLT_MAX;
 
 #pragma omp parallel for schedule(auto) reduction(min:dtime_min)
   for(int ix=0;ix<NMESH_X_LOCAL;ix++) {
@@ -30,7 +30,7 @@ double calc_timestep_fluid(struct fluid_mesh *mesh, struct run_param *this_run)
         target_mesh = &MESH(ix,iy,iz);
 
         gamma = gamma_total(target_mesh, this_run);
-        cs = sqrt((gamma-1.0)*gamma*target_mesh->uene);
+        cs = sqrtf((gamma-1.0)*gamma*target_mesh->uene);
         velx = fabsf(target_mesh->momx/target_mesh->dens);
         vely = fabsf(target_mesh->momy/target_mesh->dens);
         velz = fabsf(target_mesh->momz/target_mesh->dens);
@@ -46,10 +46,10 @@ double calc_timestep_fluid(struct fluid_mesh *mesh, struct run_param *this_run)
   }
 
   #ifndef __SERIAL__
-  double dtime_min_local;
+  float dtime_min_local;
   dtime_min_local = dtime_min;
 
-  MPI_Allreduce(&dtime_min_local, &dtime_min, 1, MPI_DOUBLE, MPI_MIN, MPI_COMM_WORLD);
+  MPI_Allreduce(&dtime_min_local, &dtime_min, 1, MPI_FLOAT, MPI_MIN, MPI_COMM_WORLD);
 #endif
 
   return (COURANT_FACT*dtime_min);
