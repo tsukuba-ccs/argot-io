@@ -109,10 +109,6 @@ extern "C" {
 #define NMAX_CUDA_DEV (0) /* dummy */
 #endif /* __USE_GPU__ */
 
-#ifndef OPENMP_NUMBER_OF_THREADS
-#define OPENMP_NUMBER_OF_THREADS (16)
-#endif
-
 #define N_SIDE (8)
 
 #define TORR_DIST_FACT (1.0e-2)

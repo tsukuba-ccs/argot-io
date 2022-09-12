@@ -31,10 +31,6 @@ void init_run(struct run_param *this_run)
 
   this_run->proc_file = fopen(proc_filename,"a");
 
-#ifdef _OPENMP
-  omp_set_num_threads(OPENMP_NUMBER_OF_THREADS);
-#endif /* _OPENMP */
-
   /* checking parameter configuration of this run */
   fprintf(this_run->proc_file,"\n\n\n\n#==================================================\n");
   fprintf(this_run->proc_file,"# model name : %s\n", this_run->model_name);
