@@ -12,7 +12,7 @@ AC_CONFIG_MACRO_DIR([m4])
 AC_PROG_CC
 AC_OPENMP
 LT_INIT
-AX_MPI
+AX_MPI([], [AC_MSG_ERROR([MPI compiler not found])])
 
 # Checks for libraries.
 AC_CHECK_LIB([m], [exp])
