@@ -295,6 +295,7 @@ main(int argc, char *argv[])
 		sleep(1);
 		output_mesh(size, mesh, &run_param, fn);
 	}
+	free(mesh);
 	output_performance("total", run_param.output_file_size,
 	    run_param.output_wt);
 	sprintf(fn, "dmp0");

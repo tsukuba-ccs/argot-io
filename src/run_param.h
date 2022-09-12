@@ -7,13 +7,13 @@ extern "C" {
 
 #include <stdint.h>
 
-#define NMESH_X_TOTAL (128)
-#define NMESH_Y_TOTAL (128)
-#define NMESH_Z_TOTAL (128)
+extern int NMESH_X_TOTAL;
+extern int NMESH_Y_TOTAL;
+extern int NMESH_Z_TOTAL;
 
-#define NNODE_X (2)
-#define NNODE_Y (2)
-#define NNODE_Z (2)
+extern int NNODE_X;
+extern int NNODE_Y;
+extern int NNODE_Z;
 
 #define NMESH_Z_TOTAL_P2 (NMESH_Z_TOTAL+2)
 

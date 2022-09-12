@@ -15,6 +15,23 @@
 #include "prototype.h"
 #include "io_ops.h"
 
+int NMESH_X_TOTAL = 128;
+int NMESH_Y_TOTAL = 128;
+int NMESH_Z_TOTAL = 128;
+
+int NNODE_X = 2;
+int NNODE_Y = 2;
+int NNODE_Z = 2;
+
+void
+usage(void)
+{
+  fprintf(stderr, "usage: io_bench_argot [-a api] "
+	"[-x mesh_x_total] [-y mesh_y_total]\n\t[-z mesh_z_total] "
+	"[-X nnode_x] [-Y nnode_y] [-Z nnode_z]\n\tprefix input_params\n");
+  exit(EXIT_FAILURE);
+}
+
 int main(int argc, char **argv)
 {
   
@@ -26,15 +43,38 @@ int main(int argc, char **argv)
   char *api = "posix";
   int c;
 
-  while ((c = getopt(argc, argv, "a:")) != -1) {
+  while ((c = getopt(argc, argv, "a:x:X:y:Y:z:Z:")) != -1) {
     switch (c) {
     case 'a':
       api = optarg;
       break;
+    case 'x':
+      NMESH_X_TOTAL = atoi(optarg);
+      break;
+    case 'y':
+      NMESH_Y_TOTAL = atoi(optarg);
+      break;
+    case 'z':
+      NMESH_Z_TOTAL = atoi(optarg);
+      break;
+    case 'X':
+      NNODE_X = atoi(optarg);
+      break;
+    case 'Y':
+      NNODE_Y = atoi(optarg);
+      break;
+    case 'Z':
+      NNODE_Z = atoi(optarg);
+      break;
+    default:
+      usage();
     }
   }
   argc -= optind;
   argv += optind;
+
+  if (argc != 2)
+    usage();
 
   init_io_ops(api);
   io_ops->init();
@@ -75,6 +115,8 @@ int main(int argc, char **argv)
     MPI_Barrier(MPI_COMM_WORLD);
     output_data_in_run(mesh, src, &this_run, this_run.model_name);
   }
+  free(mesh);
+  free(src);
 
   fprintf(this_run.proc_file,
 	  "# output throughput : %14.6e [GB/sec]\n",

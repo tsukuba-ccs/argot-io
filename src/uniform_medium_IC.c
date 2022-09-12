@@ -11,15 +11,32 @@
 #include "prototype.h"
 #include "io_ops.h"
 
+int NMESH_X_TOTAL = 128;
+int NMESH_Y_TOTAL = 128;
+int NMESH_Z_TOTAL = 128;
+
+int NNODE_X = 2;
+int NNODE_Y = 2;
+int NNODE_Z = 2;
+
 #define MESH(ix,iy,iz) (mesh[(iz)+NMESH_Z_LOCAL*((iy)+NMESH_Y_LOCAL*(ix))])
 
 void make_directory(char*);
+
+void
+usage(char *prog)
+{
+  fprintf(stderr, "usage: %s [-a api] "
+        "[-x mesh_x_total] [-y mesh_y_total]\n\t[-z mesh_z_total] "
+        "[-X nnode_x] [-Y nnode_y] [-Z nnode_z] prefix\n", prog);
+  exit(EXIT_FAILURE);
+}
 
 int main(int argc, char **argv)
 {
   static struct run_param this_run;
 
-  static struct fluid_mesh mesh[NMESH_X_LOCAL*NMESH_Y_LOCAL*NMESH_Z_LOCAL];
+  static struct fluid_mesh *mesh;
   //  static struct radiation_src src[NSOURCE_MAX];
   struct radiation_src *src;
 
@@ -31,20 +48,42 @@ int main(int argc, char **argv)
 
   program = argv[0];
 
-  while ((c = getopt(argc, argv, "a:")) != -1) {
+  while ((c = getopt(argc, argv, "a:x:X:y:Y:z:Z:")) != -1) {
     switch (c) {
     case 'a':
       api = optarg;
       break;
+    case 'x':
+      NMESH_X_TOTAL = atoi(optarg);
+      break;
+    case 'y':
+      NMESH_Y_TOTAL = atoi(optarg);
+      break;
+    case 'z':
+      NMESH_Z_TOTAL = atoi(optarg);
+      break;
+    case 'X':
+      NNODE_X = atoi(optarg);
+      break;
+    case 'Y':
+      NNODE_Y = atoi(optarg);
+      break;
+    case 'Z':
+      NNODE_Z = atoi(optarg);
+      break;
+    default:
+      usage(program);
     }
   }
   argc -= optind;
   argv += optind;
 
-  if(argc != 1) {
-    fprintf(stderr,"Usage: %s <prefix>\n", program);
-    exit(EXIT_FAILURE);
-  }
+  if (argc != 1)
+    usage(program);
+
+  mesh = malloc(sizeof(*mesh) * NMESH_X_LOCAL * NMESH_Y_LOCAL * NMESH_Z_LOCAL);
+  if (mesh == NULL)
+    fprintf(stderr, "no memory\n"), exit(EXIT_FAILURE);
 
   init_io_ops(api);
   io_ops->init();
@@ -227,6 +266,9 @@ int main(int argc, char **argv)
   }
 
   //  printf("# initial heat capacity ratio : %14.6e\n", gamma_total(&mesh[0], &this_run));
+
+  free(src);
+  free(mesh);
 
   io_ops->term();
 }
