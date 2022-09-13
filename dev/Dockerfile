@@ -5,7 +5,7 @@ ARG USERNAME=foo
 RUN apt-get update \
  && apt-get -y upgrade \
  && apt-get -y install git make libopenmpi-dev \
- && apt-get -y install sudo pkgconf \
+ && apt-get -y install sudo pkgconf curl \
  && apt-get -y install python3 automake cmake \
  && apt-get -y install fuse libfuse-dev pandoc
 
@@ -33,7 +33,7 @@ RUN useradd -m -s /bin/bash $USERNAME \
 
 USER $USERNAME
 RUN cd \
- && git clone -c feature.manyFiles=true https://github.com/spack/spack.git \
+ && git clone -c feature.manyFiles=true --depth 1 https://github.com/spack/spack.git \
  && . spack/share/spack/setup-env.sh \
  && spack external find automake autoconf libtool cmake m4 pkgconf \
  && spack install mochi-margo ^mercury~boostsys ^libfabric fabrics=rxm,sockets,tcp,udp \

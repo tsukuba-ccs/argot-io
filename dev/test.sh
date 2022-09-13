@@ -21,6 +21,7 @@ echo io_bench_io
 mpirun -x CHFS_SERVER -x CHFS_CHUNK_SIZE -x CHFS_BUF_SIZE \
 	-np 4 -hostfile $HOME/hosts -map-by node io_bench_argot -a chfs $PROB \
 	io_bench-init/io_bench-init io_bench.pars
+grep output io_bench-out/out_000_000_000
 
 echo chfsctl stop
 chfsctl -h $HOME/hosts stop
