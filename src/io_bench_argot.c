@@ -26,7 +26,7 @@ int NNODE_Z = 2;
 void
 usage(void)
 {
-  fprintf(stderr, "usage: io_bench_argot [-a api] "
+  fprintf(stderr, "usage: io_bench_argot [-s] [-a api] "
 	"[-x mesh_x_total] [-y mesh_y_total]\n\t[-z mesh_z_total] "
 	"[-X nnode_x] [-Y nnode_y] [-Z nnode_z]\n\tprefix input_params\n");
   exit(EXIT_FAILURE);
@@ -41,12 +41,15 @@ int main(int argc, char **argv)
   struct radiation_src *src;
   struct fluid_mesh *mesh;
   char *api = "posix";
-  int c, ret;
+  int c, ret, skip_verify = 0;
 
-  while ((c = getopt(argc, argv, "a:x:X:y:Y:z:Z:")) != -1) {
+  while ((c = getopt(argc, argv, "a:sx:X:y:Y:z:Z:")) != -1) {
     switch (c) {
     case 'a':
       api = optarg;
+      break;
+    case 's':
+      skip_verify = 1;
       break;
     case 'x':
       NMESH_X_TOTAL = atoi(optarg);
@@ -117,7 +120,7 @@ int main(int argc, char **argv)
 
     this_run.tnow += dtime;
     MPI_Barrier(MPI_COMM_WORLD);
-    output_data_in_run(mesh, src, &this_run, this_run.model_name);
+    output_data_in_run(mesh, src, &this_run, this_run.model_name, skip_verify);
   }
   free(mesh);
   free(src);

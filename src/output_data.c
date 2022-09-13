@@ -79,7 +79,7 @@ void output_data(struct fluid_mesh *mesh,
 void output_data_in_run(struct fluid_mesh *mesh,
 			struct radiation_src *src,
 			struct run_param *this_run,
-			char *prefix)
+			char *prefix, int skip_verify)
 {
   static char prefix_stamp[256];
   static char dirname[128];
@@ -98,6 +98,7 @@ void output_data_in_run(struct fluid_mesh *mesh,
     return;
   }
 
+#if 0
   if(this_run->step % 20 == 0) {
 
     times(&start_tms);
@@ -118,13 +119,15 @@ void output_data_in_run(struct fluid_mesh *mesh,
     MPI_Allreduce(MPI_IN_PLACE, &data_size, 1, MPI_LONG_LONG_INT, MPI_SUM, MPI_COMM_WORLD);
     this_run->output_file_size += data_size;
 
-    int io_check = verify_output(mesh, this_run, prefix_stamp);
-    if(io_check != 0) {
-      fprintf(this_run->proc_file,
-	      "# Invalid IO detected.\n");
-      fflush(this_run->proc_file);
-    }else{
-      fprintf(this_run->proc_file, "# IO verification passed\n");
+    if (!skip_verify) {
+      int io_check = verify_output(mesh, this_run, prefix_stamp);
+      if (io_check != 0) {
+	fprintf(this_run->proc_file,
+		"# Invalid IO detected.\n");
+	fflush(this_run->proc_file);
+      } else {
+	fprintf(this_run->proc_file, "# IO verification passed\n");
+      }
     }
 
     fprintf(this_run->proc_file, 
@@ -133,6 +136,7 @@ void output_data_in_run(struct fluid_mesh *mesh,
     fflush(this_run->proc_file);
 
   }
+#endif
 
   if(this_run->tnow > this_run->output_timing[this_run->output_indx]){
 
@@ -159,12 +163,14 @@ void output_data_in_run(struct fluid_mesh *mesh,
     MPI_Allreduce(MPI_IN_PLACE, &data_size, 1, MPI_LONG_LONG_INT, MPI_SUM, MPI_COMM_WORLD);
     this_run->output_file_size += data_size;
 
-    int io_check = verify_output(mesh, this_run, prefix_stamp);
-    if(io_check != 0) {
-      fprintf(this_run->proc_file,
-	      "# Invalid IO detected.\n");
-    }else{
-      fprintf(this_run->proc_file, "# IO verification passed\n");
+    if (!skip_verify) {
+      int io_check = verify_output(mesh, this_run, prefix_stamp);
+      if (io_check != 0) {
+	fprintf(this_run->proc_file,
+		"# Invalid IO detected.\n");
+      } else {
+	fprintf(this_run->proc_file, "# IO verification passed\n");
+      }
     }
 
     fprintf(this_run->proc_file, 

@@ -31,7 +31,7 @@ void output_mesh(struct fluid_mesh*, struct run_param*, char*);
 void output_mesh_single(struct fluid_mesh*, struct run_param*, char*);
 void output_src(struct radiation_src*, struct run_param*, char*);
 void output_data(struct fluid_mesh*, struct radiation_src*, struct run_param*, char*);
-void output_data_in_run(struct fluid_mesh*, struct radiation_src*, struct run_param*, char*);
+void output_data_in_run(struct fluid_mesh*, struct radiation_src*, struct run_param*, char*, int);
 void output_diagnostics(struct fluid_mesh*, struct run_param*, float);
 void calc_ray_segment(struct light_ray*, struct run_param*);
 void setup_cross_section(struct cross_section*, struct freq_param*);
