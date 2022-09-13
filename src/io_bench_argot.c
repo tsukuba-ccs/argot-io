@@ -41,7 +41,7 @@ int main(int argc, char **argv)
   struct radiation_src *src;
   struct fluid_mesh *mesh;
   char *api = "posix";
-  int c;
+  int c, ret;
 
   while ((c = getopt(argc, argv, "a:x:X:y:Y:z:Z:")) != -1) {
     switch (c) {
@@ -79,8 +79,12 @@ int main(int argc, char **argv)
   init_io_ops(api);
   io_ops->init();
 
-  src = (struct radiation_src *)malloc(sizeof(struct radiation_src)*NSOURCE_MAX);
-  mesh = (struct fluid_mesh *)malloc(sizeof(struct fluid_mesh)*NMESH_LOCAL);
+  ret = posix_memalign((void **)&src, 64, sizeof(*src) * NSOURCE_MAX);
+  if (ret)
+    fprintf(stderr, "no memory\n"), exit(EXIT_FAILURE);
+  ret = posix_memalign((void **)&mesh, 64, sizeof(*mesh) * NMESH_LOCAL);
+  if (ret)
+    fprintf(stderr, "no memory\n"), exit(EXIT_FAILURE);
   
   MPI_Init(&argc, &argv);
 
