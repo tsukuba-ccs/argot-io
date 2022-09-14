@@ -92,23 +92,6 @@
 
 #define FLUID_TINY (1.0e-32)
 
-struct fluid_mesh_raw {
-  float dens;
-  float eneg;
-  float momx, momy, momz;
-  float uene, duene, durad;
-  float etrp;
-  float pot;
-  float dens_prev; /* density in the previous step */
-
-  struct prim_chem chem;
-  struct prim_chem prev_chem; /* chemical composition in the previous iteration */
-  float  prev_uene; /* specific energy in the previous iteration */
-
-  short under_shock;
-  short high_mach;
-};
-
 struct fluid_mesh {
   float dens;
   float eneg;
@@ -124,15 +107,6 @@ struct fluid_mesh {
 
   short under_shock;
   short high_mach;
-  char pad[128 - sizeof(struct fluid_mesh_raw)];
-};
-
-struct fluid_mesh_io_raw {
-  float dens;
-  float eneg;
-  float momx, momy, momz;
-  float uene, pot;
-  struct prim_chem chem;
 };
 
 struct fluid_mesh_io {
@@ -141,7 +115,6 @@ struct fluid_mesh_io {
   float momx, momy, momz;
   float uene, pot;
   struct prim_chem chem;
-  char pad[64 - sizeof(struct fluid_mesh_io_raw)];
 };
 
 struct pad_region {

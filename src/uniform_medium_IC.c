@@ -44,7 +44,7 @@ int main(int argc, char **argv)
 
   double nH, tmpr;
   char *api = "posix", *program;
-  int c, ret;
+  int c;
 
   program = argv[0];
 
@@ -81,8 +81,8 @@ int main(int argc, char **argv)
   if (argc != 1)
     usage(program);
 
-  ret = posix_memalign((void **)&mesh, 64, sizeof(*mesh) * NMESH_LOCAL);
-  if (ret)
+  mesh = malloc(sizeof(*mesh) * NMESH_X_LOCAL * NMESH_Y_LOCAL * NMESH_Z_LOCAL);
+  if (mesh == NULL)
     fprintf(stderr, "no memory\n"), exit(EXIT_FAILURE);
 
   init_io_ops(api);
@@ -161,9 +161,7 @@ int main(int argc, char **argv)
 #if 1
   this_run.nsrc = 32768;
 
-  ret = posix_memalign((void **)&src, 64, sizeof(*src) * this_run.nsrc);
-  if (ret)
-    fprintf(stderr, "no memory\n"), exit(EXIT_FAILURE);
+  src = (struct radiation_src *) malloc(sizeof(struct radiation_src)*this_run.nsrc);
   src[0].xpos = 0.4999;
   src[0].ypos = 0.4999;
   src[0].zpos = 0.4999;
@@ -180,9 +178,7 @@ int main(int argc, char **argv)
   this_run.nsrc = 16;
   srand(2);
 
-  ret = posix_memalign((void **)&src, 64, sizeof(*src) * this_run.nsrc);
-  if (ret)
-    fprintf(stderr, "no memory\n"), exit(EXIT_FAILURE);
+  src = (struct radiation_src *) malloc(sizeof(struct radiation_src)*this_run.nsrc);
   int isrc;
   for(isrc=0;isrc<this_run.nsrc;isrc++) {
     src[isrc].xpos = (float)rand()/(float)RAND_MAX;
