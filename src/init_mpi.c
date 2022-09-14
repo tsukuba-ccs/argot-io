@@ -79,7 +79,7 @@ void init_mpi(struct run_param *this_run, struct mpi_param *this_mpi)
   MPI_Type_commit(&(this_mpi->prim_chem_type));
 
   /* define the MPI data type for the fluid_mesh_io structure */
-  blockcount[0]=6;
+  blockcount[0]=7;
   blockcount[1]=1;
   type[0]=MPI_FLOAT;
   type[1]=this_mpi->prim_chem_type;
