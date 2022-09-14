@@ -84,7 +84,7 @@ void init_mpi(struct run_param *this_run, struct mpi_param *this_mpi)
   type[0]=MPI_FLOAT;
   type[1]=this_mpi->prim_chem_type;
   adr[0]=0;
-  adr[1]=24;
+  adr[1]=sizeof(float) * blockcount[0];
 
   MPI_Type_create_struct(2,blockcount, adr, type, &(this_mpi->fluid_mesh_io_type));
   MPI_Type_commit(&(this_mpi->fluid_mesh_io_type));
