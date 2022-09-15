@@ -12,16 +12,31 @@ rm -rf dmp io_bench-* io_bench.diag
 
 PROB="-x 64 -y 64 -z 32 -X 2 -Y 2 -Z 1"
 
-#setup_IC $PROB io_bench
-#mpirun -np 4 -hostfile $HOME/hosts -map-by node io_bench_argot $PROB io_bench-init/io_bench-init io_bench.pars
+echo POSIX
+setup_IC $PROB io_bench
+mpirun -np 4 -hostfile $HOME/hosts -map-by node \
+	io_bench_argot $PROB io_bench-init/io_bench-init io_bench.pars
 
+grep output io_bench-out/out_000_000_000
+grep Invalid io_bench-out/out_000_000_000 || :
+grep dump io_bench-out/out_000_000_000
+grep dump io_bench-out/out_000_000_000 | wc
+
+rm -rf dmp io_bench-* io_bench.diag
+
+echo CHFS
 echo setup_IC
 setup_IC -a chfs $PROB io_bench
 echo io_bench_io
 mpirun -x CHFS_SERVER -x CHFS_CHUNK_SIZE -x CHFS_BUF_SIZE \
-	-np 4 -hostfile $HOME/hosts -map-by node io_bench_argot -a chfs $PROB \
+	-np 4 -hostfile $HOME/hosts -map-by node \
+	io_bench_argot -a chfs $PROB \
 	io_bench-init/io_bench-init io_bench.pars
+
 grep output io_bench-out/out_000_000_000
+grep Invalid io_bench-out/out_000_000_000 || :
+grep dump io_bench-out/out_000_000_000
+grep dump io_bench-out/out_000_000_000 | wc
 
 echo chfsctl stop
 chfsctl -h $HOME/hosts stop
