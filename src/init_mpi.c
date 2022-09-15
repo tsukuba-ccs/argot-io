@@ -10,6 +10,8 @@ int mpi_rank(int, int,int);
 
 void init_mpi(struct run_param *this_run, struct mpi_param *this_mpi)
 {
+  MPI_Aint lb, extent;
+
   MPI_Comm_size(MPI_COMM_WORLD, &(this_run->mpi_nproc));
   MPI_Comm_rank(MPI_COMM_WORLD, &(this_run->mpi_rank));
 
@@ -77,6 +79,8 @@ void init_mpi(struct run_param *this_run, struct mpi_param *this_mpi)
 
   MPI_Type_create_struct(1,blockcount, adr, type, &(this_mpi->prim_chem_type));
   MPI_Type_commit(&(this_mpi->prim_chem_type));
+  MPI_Type_get_extent(this_mpi->prim_chem_type, &lb, &extent);
+  assert(sizeof(struct prim_chem) == extent && lb == 0);
 
   /* define the MPI data type for the fluid_mesh_io structure */
   blockcount[0]=7;
@@ -88,6 +92,8 @@ void init_mpi(struct run_param *this_run, struct mpi_param *this_mpi)
 
   MPI_Type_create_struct(2,blockcount, adr, type, &(this_mpi->fluid_mesh_io_type));
   MPI_Type_commit(&(this_mpi->fluid_mesh_io_type));
+  MPI_Type_get_extent(this_mpi->fluid_mesh_io_type, &lb, &extent);
+  assert(sizeof(struct fluid_mesh_io) == extent && lb == 0);
 
   /* define the MPI data type fo ther photoion_rate structure */
   blockcount[0] = 2;
